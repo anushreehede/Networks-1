@@ -1,0 +1,357 @@
+i: 1 j: 4 $$$$$$
+Packet ID: 1, Frame: 4, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33313
+Timestamp: 2014-08-11 18:04:51.373538, Size: 98
+
+Packet ID: 2, Frame: 6, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:51.773900, Size: 86
+
+Packet ID: 3, Frame: 8, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33313
+Timestamp: 2014-08-11 18:04:51.774590, Size: 490
+
+Packet ID: 4, Frame: 9, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:52.190768, Size: 218
+
+i: 2 j: 5 $$$$$$
+Packet ID: 2, Frame: 6, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:51.773900, Size: 86
+
+Packet ID: 3, Frame: 8, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33313
+Timestamp: 2014-08-11 18:04:51.774590, Size: 490
+
+Packet ID: 4, Frame: 9, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:52.190768, Size: 218
+
+Packet ID: 5, Frame: 11, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:52.635996, Size: 210
+
+i: 4 j: 7 $$$$$$
+Packet ID: 4, Frame: 9, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:52.190768, Size: 218
+
+Packet ID: 5, Frame: 11, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:52.635996, Size: 210
+
+Packet ID: 6, Frame: 13, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33313
+Timestamp: 2014-08-11 18:04:52.701431, Size: 530
+
+Packet ID: 7, Frame: 14, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:53.112881, Size: 82
+
+i: 5 j: 8 $$$$$$
+Packet ID: 5, Frame: 11, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:52.635996, Size: 210
+
+Packet ID: 6, Frame: 13, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33313
+Timestamp: 2014-08-11 18:04:52.701431, Size: 530
+
+Packet ID: 7, Frame: 14, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:53.112881, Size: 82
+
+Packet ID: 8, Frame: 16, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:53.510346, Size: 118
+
+i: 7 j: 10 $$$$$$
+Packet ID: 7, Frame: 14, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:53.112881, Size: 82
+
+Packet ID: 8, Frame: 16, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:53.510346, Size: 118
+
+Packet ID: 9, Frame: 18, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33313
+Timestamp: 2014-08-11 18:04:53.511235, Size: 150
+
+Packet ID: 10, Frame: 20, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33313, Destination port: 22
+Timestamp: 2014-08-11 18:04:53.909368, Size: 118
+
+i: 1 j: 4 $$$$$$
+Packet ID: 1, Frame: 4, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33195
+Timestamp: 2014-08-11 18:04:46.211170, Size: 98
+
+Packet ID: 2, Frame: 6, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:46.608187, Size: 86
+
+Packet ID: 3, Frame: 8, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33195
+Timestamp: 2014-08-11 18:04:46.608967, Size: 490
+
+Packet ID: 4, Frame: 9, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:47.020073, Size: 218
+
+i: 2 j: 5 $$$$$$
+Packet ID: 2, Frame: 6, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:46.608187, Size: 86
+
+Packet ID: 3, Frame: 8, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33195
+Timestamp: 2014-08-11 18:04:46.608967, Size: 490
+
+Packet ID: 4, Frame: 9, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:47.020073, Size: 218
+
+Packet ID: 5, Frame: 11, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:48.217176, Size: 218
+
+i: 5 j: 8 $$$$$$
+Packet ID: 5, Frame: 11, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:48.217176, Size: 218
+
+Packet ID: 6, Frame: 13, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:48.618705, Size: 210
+
+Packet ID: 7, Frame: 15, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33195
+Timestamp: 2014-08-11 18:04:48.684237, Size: 530
+
+Packet ID: 8, Frame: 16, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:49.096005, Size: 82
+
+i: 6 j: 9 $$$$$$
+Packet ID: 6, Frame: 13, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:48.618705, Size: 210
+
+Packet ID: 7, Frame: 15, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33195
+Timestamp: 2014-08-11 18:04:48.684237, Size: 530
+
+Packet ID: 8, Frame: 16, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:49.096005, Size: 82
+
+Packet ID: 9, Frame: 18, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:49.510263, Size: 118
+
+i: 8 j: 11 $$$$$$
+Packet ID: 8, Frame: 16, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:49.096005, Size: 82
+
+Packet ID: 9, Frame: 18, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:49.510263, Size: 118
+
+Packet ID: 10, Frame: 20, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33195
+Timestamp: 2014-08-11 18:04:49.511161, Size: 150
+
+Packet ID: 11, Frame: 22, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:50.473649, Size: 118
+
+i: 9 j: 12 $$$$$$
+Packet ID: 9, Frame: 18, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:49.510263, Size: 118
+
+Packet ID: 10, Frame: 20, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33195
+Timestamp: 2014-08-11 18:04:49.511161, Size: 150
+
+Packet ID: 11, Frame: 22, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:50.473649, Size: 118
+
+Packet ID: 12, Frame: 24, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33195
+Timestamp: 2014-08-11 18:04:50.566763, Size: 150
+
+i: 10 j: 13 $$$$$$
+Packet ID: 10, Frame: 20, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33195
+Timestamp: 2014-08-11 18:04:49.511161, Size: 150
+
+Packet ID: 11, Frame: 22, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:50.473649, Size: 118
+
+Packet ID: 12, Frame: 24, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 33195
+Timestamp: 2014-08-11 18:04:50.566763, Size: 150
+
+Packet ID: 13, Frame: 25, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 33195, Destination port: 22
+Timestamp: 2014-08-11 18:04:50.971499, Size: 118
+
+i: 1 j: 4 $$$$$$
+Packet ID: 1, Frame: 4, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 34037
+Timestamp: 2014-08-11 17:43:22.541548, Size: 98
+
+Packet ID: 2, Frame: 6, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 34037, Destination port: 22
+Timestamp: 2014-08-11 17:43:22.940124, Size: 86
+
+Packet ID: 3, Frame: 8, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 34037
+Timestamp: 2014-08-11 17:43:22.940812, Size: 490
+
+Packet ID: 4, Frame: 9, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 34037, Destination port: 22
+Timestamp: 2014-08-11 17:43:23.353021, Size: 218
+
+i: 2 j: 5 $$$$$$
+Packet ID: 2, Frame: 6, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 34037, Destination port: 22
+Timestamp: 2014-08-11 17:43:22.940124, Size: 86
+
+Packet ID: 3, Frame: 8, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 34037
+Timestamp: 2014-08-11 17:43:22.940812, Size: 490
+
+Packet ID: 4, Frame: 9, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 34037, Destination port: 22
+Timestamp: 2014-08-11 17:43:23.353021, Size: 218
+
+Packet ID: 5, Frame: 11, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 34037, Destination port: 22
+Timestamp: 2014-08-11 17:43:23.806341, Size: 210
+
+i: 4 j: 7 $$$$$$
+Packet ID: 4, Frame: 9, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 34037, Destination port: 22
+Timestamp: 2014-08-11 17:43:23.353021, Size: 218
+
+Packet ID: 5, Frame: 11, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 34037, Destination port: 22
+Timestamp: 2014-08-11 17:43:23.806341, Size: 210
+
+Packet ID: 6, Frame: 13, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 34037
+Timestamp: 2014-08-11 17:43:23.871648, Size: 530
+
+Packet ID: 7, Frame: 14, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 34037
+Timestamp: 2014-08-11 17:43:25.010795, Size: 530
+
+i: 6 j: 9 $$$$$$
+Packet ID: 6, Frame: 13, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 34037
+Timestamp: 2014-08-11 17:43:23.871648, Size: 530
+
+Packet ID: 7, Frame: 14, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 34037
+Timestamp: 2014-08-11 17:43:25.010795, Size: 530
+
+Packet ID: 8, Frame: 16, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 34037, Destination port: 22
+Timestamp: 2014-08-11 17:43:25.702697, Size: 82
+
+Packet ID: 9, Frame: 18, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 34037, Destination port: 22
+Timestamp: 2014-08-11 17:43:26.107028, Size: 118
+
+i: 8 j: 11 $$$$$$
+Packet ID: 8, Frame: 16, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 34037, Destination port: 22
+Timestamp: 2014-08-11 17:43:25.702697, Size: 82
+
+Packet ID: 9, Frame: 18, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 34037, Destination port: 22
+Timestamp: 2014-08-11 17:43:26.107028, Size: 118
+
+Packet ID: 10, Frame: 20, Incoming: 0
+Source IP: 111.93.5.203, Destination IP: 1.93.33.2
+Source port no: 22, Destination port: 34037
+Timestamp: 2014-08-11 17:43:26.107968, Size: 150
+
+Packet ID: 11, Frame: 23, Incoming: 1
+Source IP: 1.93.33.2, Destination IP: 111.93.5.203
+Source port no: 34037, Destination port: 22
+Timestamp: 2014-08-11 17:43:26.497679, Size: 118
+
