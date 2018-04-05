@@ -87,6 +87,79 @@ class Functionality
 	}
 
 	// method 2
+	float[][] proximityMatrix(ArrayList<Cluster> clusterList, int flowSize)
+	{
+		float[][] proximity = new float[flowSize][flowSize];
+		int i=0;
+		for(ArrayList<Integer> sflist_outer : clusterList.leaves)
+		{
+			int j=0;
+			for(ArrayList<Integer> sflist_inner : clusterList.leaves)
+			{
+				proximity[i][j] = euclideanDistance(sflist_outer, sflist_inner);
+				++j;
+			}
+			++i;
+		}
+
+		for(i=0; i<flowSize; ++i)
+		{
+			for(int j=0; j<flowSize; ++j)
+			{
+				System.out.print(proximity[i][j]+" \t ");
+			}
+			System.out.print("\n");
+		}
+
+		// using proximity matrix begin clustering. write pseudocode. 
+	}
+
+	float euclideanDistance(ArrayList<Integer> u, ArrayList<Integer> v)
+	{	
+		int sum = 0;
+		for(int i=0; i<u.size(); ++i)
+		{
+			sum += ((u.get(i) - v.get(i)) * (u.get(i) - v.get(i)));
+		}
+		float dist = (float)Math.sqrt(sum);
+		return dist;
+	}
+
+	void clustering(SubFlow sf, int flowSize)
+	{
+		ArrayList<Cluster> clusterList = new ArrayList<Cluster>();
+		// function to convert the subflows sf to clusters 
+		for(ArrayList<Integer> i : sf.subflows)
+		{
+			clusterList.add(new Cluster(i));
+		}
+
+		float[][] proximity = proximityMatrix(clusterList, flowSize);
+		int k = flowSize;
+
+		while(k > 1) // until the number of clusters becomes 1.
+		{
+			// get i and j of subflows having least proximity
+			// take centroid of those subflows - associated those subflows with their centroid
+			// new proximity matrix is calculated using this centroid
+			// for each centroid formed create a cluster, update its centroid and subflows within 
+			// the cluster
+
+			// get (i,j) having minimum proximity
+			// create cluster object for k for (i,j)
+			// to current cluster list add all clusters except i and j, finally add k
+			// take centroid of each cluster as next point and calculate new proximity matrix 
+
+			ArrayList<Cluster> currentClusterList = new ArrayList<Cluster>();
+
+			float[][] proximity = proximityMatrix(,k);
+
+			--k;
+
+		}
+
+	}
+
 
 	// method 3
 

@@ -5,10 +5,10 @@ class Work{
 	{
 		// contain details of all packets in each flow
 		ArrayList<Flow> trainingExamples = readInputCSV(args[0]);
-		// for (Flow p : trainingExamples)
-		// {
-		// 	p.printFlow();
-		// }
+		for (Flow p : trainingExamples)
+		{
+			p.printFlow();
+		}
 
 		// u and v to decide subflow size
 		int u=1, v=1;
@@ -18,11 +18,14 @@ class Work{
 
 		// make packet pairs within each flow and print them 
 		ArrayList<PacketPair> packetPairs = f.createPacketPairs(trainingExamples);
-		//f.printPacketPairs(packetPairs);
+		f.printPacketPairs(packetPairs);
 
 		// make subflows using flows and packet pair info
 		ArrayList<SubFlow> subflows = f.createSubflows(trainingExamples, packetPairs, u, v);
 		f.printSubFlows(subflows);
+
+		// clustering the subflows within each flow
+		f.clustering(subflows.get(0), 5);
 
 		// assign labels to each flow
 		//assignLabels(trainingExamples);
