@@ -17,6 +17,7 @@ class Cluster
     void printCluster()
     {
     	for(int i: this.leaves)
-    		System.out.println(i+" ");
+    		System.out.print(i+" ");
+    	System.out.print("\n");
     }
 }

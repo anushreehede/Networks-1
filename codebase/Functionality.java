@@ -142,7 +142,7 @@ class Functionality
 
 		int k = currentClusterList.size();
 
-		while(k > 1) // until the number of clusters becomes 1.
+		while(k > 2) // until the number of clusters becomes 1.
 		{
 			for(Cluster c : currentClusterList)
 				c.printCluster();
@@ -151,40 +151,44 @@ class Functionality
 
 			ArrayList<Cluster> clusterPair = minimumProximity(proximity, currentClusterList);
 
-			// find a mean point for clusterPair
-			ArrayList<Integer> centroid = new ArrayList<Integer>(Collections.nCopies(clusterPair.get(0).leaves.size(), 0));
-			Cluster mid = new Cluster(centroid);
-			for(Cluster c : clusterPair)
-			{
-				int j=0;
-				for(int i : c.leaves)
-				{
-					int sum = (centroid.get(j) + i)/2;
-					centroid.add(sum);
-					++j;
-				}
+			clusterPair.get(0).printCluster();
+			clusterPair.get(1).printCluster();
 
-				mid.children.add(c);
+			// find a mean point for clusterPair
+			ArrayList<Integer> centroid = new ArrayList<Integer>();
+			for(int j = 0; j<clusterPair.get(0).leaves.size(); ++j)
+			{
+				centroid.add((clusterPair.get(0).leaves.get(j) + clusterPair.get(1).leaves.get(j))/2);
 			}
+			Cluster mid = new Cluster(centroid);
+			mid.children.add(clusterPair.get(0));
+			mid.children.add(clusterPair.get(1));
+			System.out.println(mid.leaves);
+			// mid.children.get(0).printCluster();
+			// mid.children.get(1).printCluster();
 
 			// remove clusterPair from the currentClusterList and add the mean point to it
 			currentClusterList.remove(clusterPair.get(0));
 			currentClusterList.remove(clusterPair.get(1));
 			currentClusterList.add(mid);
+
+			// for(Cluster c : currentClusterList)
+			// 	c.printCluster();
 			
-			// add clusterPair to clusterList
-			addCluster(clusterPair, clusterList);
+			// // add clusterPair to clusterList
+			// addCluster(clusterPair, clusterList);
 
 			// update cluster count
 			k = currentClusterList.size();
+			System.out.println(k);
 
 		}
 	}
 
 	ArrayList<Cluster> minimumProximity(float[][] proximity, ArrayList<Cluster> currentClusterList)
 	{
-		int i=0,j=0;
-		float min = proximity[0][0];
+		int i=0,j=1;
+		float min = proximity[0][1];
 		int m = currentClusterList.size();
 		int n = currentClusterList.size();
 
@@ -192,6 +196,8 @@ class Functionality
 	   	{
 	    	for(int d = 0; d<n; d++)
 	      	{
+	      		if(c == d)
+	      			continue;
 	        	if (proximity[c][d] < min)
 	        	{
 	            	min = proximity[c][d];
@@ -208,9 +214,29 @@ class Functionality
 		return clusterPair;
 	}
 
+	// TODO
 	// very imp - final representation 
 	void addCluster(ArrayList<Cluster> clusterPair, ArrayList<ArrayList<Cluster>> clusterList)
 	{
+		if(clusterPair.get(0).children.isEmpty() && clusterPair.get(1).children.isEmpty())
+			clusterList.add(clusterPair);
+		else
+		{
+			if(!clusterPair.get(0).children.isEmpty())
+				ArrayList<Cluster> lchild = clusterPair.get(0).children;
+
+
+		}
+		else if(!clusterPair.get(0).children.isEmpty())
+		{
+			clusterPair = clusterPair.get(1).children;
+			addCluster(clusterPair, clusterList);
+		}
+		else if(!clusterPair.get(0).children.isEmpty() && clusterPair.get(1).children.isEmpty())
+		{
+			clusterPair = clusterPair.get(0).children;
+			addCluster(clusterPair, clusterList);
+		}
 
 	}
 
