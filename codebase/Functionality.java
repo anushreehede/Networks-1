@@ -91,12 +91,12 @@ class Functionality
 	{
 		float[][] proximity = new float[flowSize][flowSize];
 		int i=0;
-		for(ArrayList<Integer> sflist_outer : clusterList.leaves)
+		for(Cluster c_outer : clusterList)
 		{
 			int j=0;
-			for(ArrayList<Integer> sflist_inner : clusterList.leaves)
+			for(Cluster c_inner : clusterList)
 			{
-				proximity[i][j] = euclideanDistance(sflist_outer, sflist_inner);
+				proximity[i][j] = euclideanDistance(c_outer.leaves, c_inner.leaves);
 				++j;
 			}
 			++i;
@@ -110,6 +110,8 @@ class Functionality
 			}
 			System.out.print("\n");
 		}
+
+		return proximity;
 
 		// using proximity matrix begin clustering. write pseudocode. 
 	}
@@ -125,41 +127,92 @@ class Functionality
 		return dist;
 	}
 
-	void clustering(SubFlow sf, int flowSize)
+	void clustering(SubFlow sf)
 	{
-		ArrayList<Cluster> clusterList = new ArrayList<Cluster>();
+		ArrayList<ArrayList<Cluster>> clusterList = new ArrayList<ArrayList<Cluster>>();
+		ArrayList<Cluster> currentClusterList = new ArrayList<Cluster>();
 		// function to convert the subflows sf to clusters 
 		for(ArrayList<Integer> i : sf.subflows)
 		{
-			clusterList.add(new Cluster(i));
+			ArrayList<Cluster> temp = new ArrayList<Cluster>();
+			temp.add(new Cluster(i));
+			clusterList.add(temp);
+			currentClusterList.add(new Cluster(i));
 		}
 
-		float[][] proximity = proximityMatrix(clusterList, flowSize);
-		int k = flowSize;
+		int k = currentClusterList.size();
 
 		while(k > 1) // until the number of clusters becomes 1.
 		{
-			// get i and j of subflows having least proximity
-			// take centroid of those subflows - associated those subflows with their centroid
-			// new proximity matrix is calculated using this centroid
-			// for each centroid formed create a cluster, update its centroid and subflows within 
-			// the cluster
+			for(Cluster c : currentClusterList)
+				c.printCluster();
 
-			// get (i,j) having minimum proximity
-			// create cluster object for k for (i,j)
-			// to current cluster list add all clusters except i and j, finally add k
-			// take centroid of each cluster as next point and calculate new proximity matrix 
+			float[][] proximity = proximityMatrix(currentClusterList,k);
 
-			ArrayList<Cluster> currentClusterList = new ArrayList<Cluster>();
+			ArrayList<Cluster> clusterPair = minimumProximity(proximity, currentClusterList);
 
-			float[][] proximity = proximityMatrix(,k);
+			// find a mean point for clusterPair
+			ArrayList<Integer> centroid = new ArrayList<Integer>(Collections.nCopies(clusterPair.get(0).leaves.size(), 0));
+			Cluster mid = new Cluster(centroid);
+			for(Cluster c : clusterPair)
+			{
+				int j=0;
+				for(int i : c.leaves)
+				{
+					int sum = (centroid.get(j) + i)/2;
+					centroid.add(sum);
+					++j;
+				}
 
-			--k;
+				mid.children.add(c);
+			}
+
+			// remove clusterPair from the currentClusterList and add the mean point to it
+			currentClusterList.remove(clusterPair.get(0));
+			currentClusterList.remove(clusterPair.get(1));
+			currentClusterList.add(mid);
+			
+			// add clusterPair to clusterList
+			addCluster(clusterPair, clusterList);
+
+			// update cluster count
+			k = currentClusterList.size();
 
 		}
-
 	}
 
+	ArrayList<Cluster> minimumProximity(float[][] proximity, ArrayList<Cluster> currentClusterList)
+	{
+		int i=0,j=0;
+		float min = proximity[0][0];
+		int m = currentClusterList.size();
+		int n = currentClusterList.size();
+
+	   	for(int c = 0; c<m; c++)
+	   	{
+	    	for(int d = 0; d<n; d++)
+	      	{
+	        	if (proximity[c][d] < min)
+	        	{
+	            	min = proximity[c][d];
+	            	i=c;
+	            	j=d;
+	        	}
+	      	}
+	   	}
+
+	   	ArrayList<Cluster> clusterPair = new ArrayList<Cluster>();
+	   	clusterPair.add(currentClusterList.get(i));
+	   	clusterPair.add(currentClusterList.get(j));
+
+		return clusterPair;
+	}
+
+	// very imp - final representation 
+	void addCluster(ArrayList<Cluster> clusterPair, ArrayList<ArrayList<Cluster>> clusterList)
+	{
+
+	}
 
 	// method 3
 

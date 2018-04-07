@@ -25,7 +25,7 @@ class Work{
 		f.printSubFlows(subflows);
 
 		// clustering the subflows within each flow
-		f.clustering(subflows.get(0), 5);
+		f.clustering(subflows.get(0));
 
 		// assign labels to each flow
 		//assignLabels(trainingExamples);
