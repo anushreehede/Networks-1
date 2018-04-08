@@ -142,8 +142,9 @@ class Functionality
 
 		int k = currentClusterList.size();
 
-		while(k > 2) // until the number of clusters becomes 1.
+		while(k > 1) // until the number of clusters becomes 1.
 		{
+			System.out.print("\n");
 			for(Cluster c : currentClusterList)
 				c.printCluster();
 
@@ -181,6 +182,7 @@ class Functionality
 			// update cluster count
 			k = currentClusterList.size();
 			System.out.println(k);
+			System.out.println("--------");
 
 		}
 	}
@@ -218,25 +220,25 @@ class Functionality
 	// very imp - final representation 
 	void addCluster(ArrayList<Cluster> clusterPair, ArrayList<ArrayList<Cluster>> clusterList)
 	{
-		if(clusterPair.get(0).children.isEmpty() && clusterPair.get(1).children.isEmpty())
-			clusterList.add(clusterPair);
-		else
-		{
-			if(!clusterPair.get(0).children.isEmpty())
-				ArrayList<Cluster> lchild = clusterPair.get(0).children;
+		// if(clusterPair.get(0).children.isEmpty() && clusterPair.get(1).children.isEmpty())
+		// 	clusterList.add(clusterPair);
+		// else
+		// {
+		// 	if(!clusterPair.get(0).children.isEmpty())
+		// 		ArrayList<Cluster> lchild = clusterPair.get(0).children;
 
 
-		}
-		else if(!clusterPair.get(0).children.isEmpty())
-		{
-			clusterPair = clusterPair.get(1).children;
-			addCluster(clusterPair, clusterList);
-		}
-		else if(!clusterPair.get(0).children.isEmpty() && clusterPair.get(1).children.isEmpty())
-		{
-			clusterPair = clusterPair.get(0).children;
-			addCluster(clusterPair, clusterList);
-		}
+		// }
+		// else if(!clusterPair.get(0).children.isEmpty())
+		// {
+		// 	clusterPair = clusterPair.get(1).children;
+		// 	addCluster(clusterPair, clusterList);
+		// }
+		// else if(!clusterPair.get(0).children.isEmpty() && clusterPair.get(1).children.isEmpty())
+		// {
+		// 	clusterPair = clusterPair.get(0).children;
+		// 	addCluster(clusterPair, clusterList);
+		// }
 
 	}
 

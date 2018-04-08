@@ -3,7 +3,7 @@ import java.util.*;
 class Cluster
 {
 	ArrayList<Cluster> children;
-    ArrayList<Integer> leaves; // subject to change
+    ArrayList<Integer> leaves; // subflows
 
     public Cluster(ArrayList<Integer> sf)
     {
