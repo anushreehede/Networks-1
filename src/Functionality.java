@@ -368,43 +368,43 @@ class Functionality
 	}
 
 	// // Create a CSV file having the subflow information
-	// void createDataset(ArrayList<SubFlow> subflows)
-	// {
-	// 	String filePath = "../subflow_dataset.csv";
-	// 	Writer bufferedWriter = null;
-	// 	try {
+	void createDataset(ArrayList<SubFlow> subflows)
+	{
+		String filePath = "../subflow_dataset.csv";
+		Writer bufferedWriter = null;
+		try {
 			
-	// 		//Creating a file
-	// 		Writer fileWriter = new FileWriter(filePath);
-	// 		bufferedWriter = new BufferedWriter(fileWriter);
+			//Creating a file
+			Writer fileWriter = new FileWriter(filePath);
+			bufferedWriter = new BufferedWriter(fileWriter);
 
-	// 		for(SubFlow sf : subflows)
-	// 		{
-	// 			bufferedWriter.write(sf.flowid+","+sf.ppid+",");
-	// 			for(int i : sf.subflow)
-	// 			{
-	// 				bufferedWriter.write(i+",");
-	// 			}
-	// 			bufferedWriter.write(sf.subprotocol);
-	// 			bufferedWriter.write(System.getProperty("line.separator"));
-	// 		}
-	// 	} catch (IOException e) {
-	// 		System.out.println("Problem occurs when creating file " + filePath);
-	// 		e.printStackTrace();
-	// 	} finally {
+			for(SubFlow sf : subflows)
+			{
+				bufferedWriter.write(sf.flowid+","+sf.ppid+",");
+				for(int i : sf.subflow)
+				{
+					bufferedWriter.write(i+",");
+				}
+				bufferedWriter.write(sf.subprotocol);
+				bufferedWriter.write(System.getProperty("line.separator"));
+			}
+		} catch (IOException e) {
+			System.out.println("Problem occurs when creating file " + filePath);
+			e.printStackTrace();
+		} finally {
 			
-	// 		//Closing the file
-	// 		if (bufferedWriter != null) {
-	// 			try {
-	// 				bufferedWriter.close();
-	// 			} catch (IOException e) {
-	// 				System.out.println("Problem occurs when closing file !");
-	// 				e.printStackTrace();
-	// 			}
-	// 		}
-	// 	}
+			//Closing the file
+			if (bufferedWriter != null) {
+				try {
+					bufferedWriter.close();
+				} catch (IOException e) {
+					System.out.println("Problem occurs when closing file !");
+					e.printStackTrace();
+				}
+			}
+		}
 
-	// }
+	}
 
 }
 
