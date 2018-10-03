@@ -1,3 +1,5 @@
-Project_Dataset
-*.zip
-*.class
+/env
+/Project_Dataset
+/training_set
+/weka*
+/pcap2text
