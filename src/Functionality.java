@@ -22,7 +22,7 @@ class Functionality
 			// String directoryPath = "../joint_logs";
 			File logs = new File(directoryPath);
 			Scanner sc = new Scanner(logs);
-			
+			int r = 0;			
 			while(sc.hasNextLine())
 			{
 				String line = sc.nextLine();
@@ -79,19 +79,6 @@ class Functionality
 			    			String DIP = V[2];
 			    			String DP = V[3];
 
-			    			// swap check
-			    			// if(SIP.equals("111.93.5.203") && SP.equals("22"))
-			    			// {
-			    			// 	SIP.replace(0, SIP.length(), DIP);
-			    			// 	SP.replace(0, SP.length(), DP);
-			    				
-			    			// 	// System.out.println("i'm here.");
-			    			// 	// System.out.println(SIP+" "+SP);
-			  					// // q=1;
-			    			// }
-
-			    			// System.out.println(SIP+" "+SP);
-
 			    			// If there is a match
 			    			if((SIP.equals(sourceIP) && SP.equals(sourcePort)) || (DIP.equals(sourceIP) && DP.equals(sourcePort)))
 							{
@@ -104,6 +91,7 @@ class Functionality
 								while(sc.hasNextLine())
 								{
 									String nline = sc.nextLine();
+									System.out.println(nline);
 									String check2 = "connection lost";
 									if(!nline.contains(check2))
 										loglines.add(nline);
@@ -155,7 +143,6 @@ class Functionality
 				}
 				
 			}
-			
 		}
 		System.out.println("No. of flows in log files: "+z);
 		return flows;
@@ -217,51 +204,6 @@ class Functionality
 			// System.out.println("flow: "+sf.flowid+" packet pair: "+sf.ppid+" subprotocol: "+sf.subprotocol);
 		}
 		System.out.println("x_alpha print: "+x+" x_beta print: "+y);
-	}
-
-	// Simple edit distance algorithm to calculate similarity between two strings
-	int editDistance(String s1, String s2) 
-	{
-	    s1 = s1.toLowerCase();
-	    s2 = s2.toLowerCase();
-
-	    int[] costs = new int[s2.length() + 1];
-	    for (int i = 0; i <= s1.length(); i++) 
-	    {
-	      	int lastValue = i;
-	      	for (int j = 0; j <= s2.length(); j++) 
-	      	{
-		        if (i == 0)
-		          	costs[j] = j;
-		        else 
-		        {
-		          	if (j > 0) 
-		          	{
-			            int newValue = costs[j - 1];
-			            if (s1.charAt(i - 1) != s2.charAt(j - 1))
-			              newValue = Math.min(Math.min(newValue, lastValue),
-			                  costs[j]) + 1;
-			            costs[j - 1] = lastValue;
-			            lastValue = newValue;
-		          	}
-		        }
-	      	}
-	      	if (i > 0)
-	        	costs[s2.length()] = lastValue;
-	    }
-	    return costs[s2.length()];
-  	}
-
-  	// Calculate the similarity measure
-	double similarity(String s1, String s2) 
-	{
-	  String longer = s1, shorter = s2;
-	  if (s1.length() < s2.length()) { // longer should always have greater length
-	    longer = s2; shorter = s1;
-	  }
-	  int longerLength = longer.length();
-	  if (longerLength == 0) { return 1.0; /* both strings are zero length */ }
-	  return (longerLength - editDistance(longer, shorter)) / (double) longerLength;
 	}
 
 	// Find out the labels of the subprotocols for the subflows
