@@ -9,8 +9,6 @@ class Flow
 	ArrayList<String> logs = new ArrayList<String>();
 	// List of the packet pairs in the flow
 	ArrayList<PacketPair> packetPairs = new ArrayList<PacketPair>();
-	
-	// int label;
 
 	// Flow constructor
 	public Flow(int i,ArrayList<Packet> p, ArrayList<String> l)
@@ -24,7 +22,6 @@ class Flow
 		{
 			logs.add(s);
 		} 
-		// label = -1;
 
 		int t = 1; // packet pair ID
 		for(int j=0; j<features.size()-1; ++j)
@@ -41,18 +38,8 @@ class Flow
 	// Printing flow
 	void printFlow()
 	{
-		// String lbl;
-		// switch(this.label)
-		// {
-		// 	case 0: lbl = "Successful DA"; break;
-		// 	case 1: lbl = "Unsuccessful DA"; break;
-		// 	case 2: lbl = "SSH Connection"; break;
-		// 	default: lbl = "NA"; break;
-		// }
-
 		System.out.print("\nFlow: "+id+"\n");
 		for(Packet i:this.features)
 			i.printPacket();
-		// System.out.println("Label -> "+lbl);
 	}
 }

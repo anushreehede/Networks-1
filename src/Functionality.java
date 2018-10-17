@@ -91,7 +91,7 @@ class Functionality
 								while(sc.hasNextLine())
 								{
 									String nline = sc.nextLine();
-									System.out.println(nline);
+									// System.out.println(nline);
 									String check2 = "connection lost";
 									if(!nline.contains(check2))
 										loglines.add(nline);
