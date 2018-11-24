@@ -11,6 +11,8 @@ import pyshark # For reading the info field of a packet
 
 # Directory where pcap files are present
 directory = sys.argv[1]
+# Directory where pcap data will be stored
+dest_directory = sys.argv[2]
 
 # For every pcap file 
 for filename in os.listdir(directory):
@@ -19,7 +21,7 @@ for filename in os.listdir(directory):
 	print('\n'+filename)
 
 	# Open the text file which will store the current flow information
-	newfile = "../pcap2txt/"+filename+".txt"
+	newfile = dest_directory+"/"+filename+".txt"
 	packets = open(newfile, "w")
 	
 	pcapReader = dpkt.pcap.Reader(open(filepath, "rb"))
@@ -37,7 +39,7 @@ for filename in os.listdir(directory):
 		if Raw in pkt: 
 			# Iterate through the data until we get a byte with value 21 or 0x15
 			for b in pkt[Raw]:
-				if b.load[5] == 21:
+				if len(b.load) >= 6 and b.load[5] == 21:
 	        		# Store the packet number 
 					pkt_no = j
 					break
@@ -45,14 +47,17 @@ for filename in os.listdir(directory):
 			break
 
 	### 2. Find the number of times a login has been attempted
-	login = 0
+	login_list = []
+	j = 0
 	cap = pyshark.FileCapture(filepath, only_summaries=True)
 	for packet in cap:
+		j+=1
 		if 'Client: Encrypted packet' in packet.info:
-			login += 1
+			login_list.append(j)
 
 
-	### 3. Begin parsing the pcap file properly 
+
+	### 3. Begin parsing the pcap file properly 	
 	i=0
 	for ts, data in pcapReader:
 		i+=1
@@ -61,6 +66,10 @@ for filename in os.listdir(directory):
 		else:
 			tp = 0 # Not transition point 1
 
+		if i in login_list:
+			login = 1 # Found an encrypted packet
+		else:
+			login = 0 # Otherwise
 		# Get the link layer info
 		ether = dpkt.ethernet.Ethernet(data)
 		if ether.type != dpkt.ethernet.ETH_TYPE_IP: raise
@@ -71,19 +80,22 @@ for filename in os.listdir(directory):
 		dst = socket.inet_ntoa(ip.dst)
 		
 		# Get the transport layer info
-		tcp = ip.data
-		s_port = tcp.sport
-		d_port = tcp.dport
+		if ip.p in (dpkt.ip.IP_PROTO_TCP, dpkt.ip.IP_PROTO_UDP):
+			tcp = ip.data
+			s_port = tcp.sport
+			d_port = tcp.dport
 
-		# Store all the obtained info in the text file
-		if d_port == 22 and len(tcp.data) > 0:
-			incoming=True
-			# print("Packet: %d, Incoming: %r\nSource IP: %s, Destination IP: %s\nSource port no: %d, Destination port: %d\nTimestamp: %s, Size: %d, Trans point: %d, Login: %d\n" % (i,incoming, src, dst, s_port, d_port, str(datetime.utcfromtimestamp(ts)), len(data), tp, login))
-			packets.write("%d,%r,%s,%s,%d,%d,%s,%d,%d,%d\n" % (i,incoming, src, dst, s_port, d_port, str(datetime.utcfromtimestamp(ts)), len(data), tp, login))
-		elif s_port == 22 and len(tcp.data) > 0:
-			incoming=False
-			# print("Packet: %d, Incoming: %r\nSource IP: %s, Destination IP: %s\nSource port no: %d, Destination port: %d\nTimestamp: %s, Size: %d, Trans point: %d, Login: %d\n" % (i,incoming, src, dst, s_port, d_port, str(datetime.utcfromtimestamp(ts)), len(data), tp, login))
-			packets.write("%d,%r,%s,%s,%d,%d,%s,%d,%d,%d\n" % (i,incoming, src, dst, s_port, d_port, str(datetime.utcfromtimestamp(ts)), len(data), tp, login))
+			if len(tcp.data) > 0: 
+
+				# Store all the obtained info in the text file
+				if d_port == 22:
+					incoming=True
+					# print("Packet: %d, Incoming: %r\nSource IP: %s, Destination IP: %s\nSource port no: %d, Destination port: %d\nTimestamp: %s, Size: %d, Trans point: %d, Login: %d\n" % (i,incoming, src, dst, s_port, d_port, str(datetime.utcfromtimestamp(ts)), len(data), tp, login))
+					packets.write("%d,%r,%s,%s,%d,%d,%s,%d,%d,%d\n" % (i,incoming, src, dst, s_port, d_port, str(datetime.utcfromtimestamp(ts)), len(data), tp, login))
+				elif s_port == 22:
+					incoming=False
+					# print("Packet: %d, Incoming: %r\nSource IP: %s, Destination IP: %s\nSource port no: %d, Destination port: %d\nTimestamp: %s, Size: %d, Trans point: %d, Login: %d\n" % (i,incoming, src, dst, s_port, d_port, str(datetime.utcfromtimestamp(ts)), len(data), tp, login))
+					packets.write("%d,%r,%s,%s,%d,%d,%s,%d,%d,%d\n" % (i,incoming, src, dst, s_port, d_port, str(datetime.utcfromtimestamp(ts)), len(data), tp, login))
 	
 	# Close the text file
 	packets.close()

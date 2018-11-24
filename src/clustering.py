@@ -1,6 +1,7 @@
 #### Script to carry out the clustering ####
 
 from scipy.cluster.hierarchy import linkage, fcluster
+import numpy as np
 import csv
 
 # File containing the dataset
@@ -9,6 +10,8 @@ filename = "../subflow_dataset.csv"
 # Thresholds for the classes alpha and beta
 th_alpha = 100
 th_beta = 50
+u = 1
+v = 1
 
 # Function to read the dataset and compute the sets X_alpha and X_beta
 def read_file(filename):
@@ -28,27 +31,43 @@ def read_file(filename):
 			if line[-1] == "transport" or line[-1] == "transition point 1":
 				X_alpha.append(line[2:-1])
 			else:
+				# print(line)
 				X_beta.append(line[2:-1])
 	return X_alpha, X_beta
 
-# Get the centroids of the formed clusters 
-def get_centroids(T):
-	
-	# Sum the vectors in each cluster
-	lens = {}      # will contain the lengths for each cluster
-	centroids = {} # will contain the centroids of each cluster
-	
-	for idx,clno in enumerate(T):
-	    centroids.setdefault(clno,np.zeros(D)) 
-	    centroids[clno] += features[idx,:]
-	    lens.setdefault(clno,0)
-	    lens[clno] += 1
-	
-	# Divide by number of observations in each cluster to get the centroid
-	for clno in centroids:
-	    centroids[clno] /= float(lens[clno])
+# Calculate centroid
+def centroid(a, b):
+	c = []
+	i = 0
+	D = u+v+2
+	for i in range(D):
+		x = (float(a[i]) + float(b[i]))/2
+		c.append(x)
+	return c
 
-	return centroids
+# Get the centroids of the formed clusters 
+def get_centroids(X, c):
+	i = 0
+	centroids = {}
+	c = c.astype(np.int64)
+	for cluster in c:
+		if cluster[0] < len(X) and cluster[1] < len(X):
+			val = centroid(X[cluster[0]], X[cluster[1]])
+
+		elif cluster[0] < len(X) and cluster[1] >= len(X): 
+			val = centroid(X[cluster[0]], centroids[cluster[1]-len(X)])
+
+		elif cluster[0] > len(X) and cluster[1] < len(X): 
+			val = centroid(centroids[cluster[0]-len(X)], X[cluster[1]])
+
+		else:
+			val = centroid(centroids[cluster[0]-len(X)], centroids[cluster[1]-len(X)])
+
+		centroids[i] = val
+		i += 1
+		# print(i)
+
+	return centroids 
 
 def main():
 
@@ -57,12 +76,28 @@ def main():
 	print(len(X_alpha), len(X_beta))
 
 	# Perform hierarchical Ward clustering using Euclidean distance 
-	Y_alpha = fcluster(linkage(X_alpha, method='ward', metric='euclidean'), th_alpha)
-	Y_beta = fcluster(linkage(X_beta, method='ward', metric='euclidean'), th_beta)
+	c_1 = linkage(X_alpha, method='ward', metric='euclidean')
+	c_2 = linkage(X_beta, method='ward', metric='euclidean')
+	Y_alpha = fcluster(c_1, th_alpha)
+	Y_beta = fcluster(c_2, th_beta)
+	print(type(c_1))
+	centroids_alpha = get_centroids(X_alpha, c_1)
+	centroids_beta = get_centroids(X_beta, c_2)
+	print(len(c_1), len(centroids_alpha))
+	print(len(c_2), len(centroids_beta))
+	# print(centroids_alpha)
+	# print(centroids_beta)
 
-	print(len(Y_alpha), len(Y_beta))
+	model_file = "../model.txt"
+	with open(model_file, 'w') as f:
+		writer = csv.writer(f)
 
-	print(Yalpha[:20])
+		for c in centroids_alpha.keys():
+			writer.writerow(centroids_alpha[c])
+		f.write("---\n")
+		for c in centroids_beta.keys():
+			writer.writerow(centroids_beta[c])
+
 	
 	# Final step: how to make Z_alpha and Z_beta?
 

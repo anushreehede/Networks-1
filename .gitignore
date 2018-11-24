@@ -1,5 +1,5 @@
 /env
-/Project_Dataset
-/training_set
-/weka*
+/new_pcap2txt
 /pcap2text
+/ssh_flows_train
+/ssh_test

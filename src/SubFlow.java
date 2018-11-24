@@ -6,6 +6,10 @@ class SubFlow
 	ArrayList<Integer> subflow; // Subflow features
 	String subprotocol; // Subprotocol value of the subflow
 
+	public SubFlow()
+	{
+		
+	}
 	public SubFlow(int fid)
 	{
 		flowid = fid;
