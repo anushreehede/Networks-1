@@ -40,7 +40,7 @@ class Flow
 			}
 		}
 
-		inter_arrival_time = 0;
+		//inter_arrival_time = 0;
 		actual = "";
 		label = "";
 	}

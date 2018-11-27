@@ -7,24 +7,28 @@ public class Training
 {
 	public static void main(String args[]) throws Exception
 	{
+		long sTime = System.currentTimeMillis();
+
 		// creates flow objects from the files of directory present in args[0]
 		ArrayList<Flow> flows = createFlows(args[0]);
-		System.out.println("Number of flows in pcap files: "+flows.size());
+		// System.out.println("Number of flows in pcap files: "+flows.size());
 
 		// u and v to decide subflow size
 		int u=1, v=1;
 
 		// make subflows using flows and packet pair info
-		ArrayList<SubFlow> subflows = createSubflows(flows, u, v);
-		// printSubFlows(subflows);
-		System.out.println("Number of sub flows: "+subflows.size());
-
+		createSubflows(flows, u, v);
+		
 		// label the subflows with the subprotocols 
-		labelSubprotocols(flows, subflows);
-		// printSubFlows(subflows);
+		labelSubprotocols(flows);
+
+		long eTime = System.currentTimeMillis();
+
+		long timeTaken = eTime-sTime;
+		System.out.println("Time taken for training: "+timeTaken+" seconds");
 
 		// create a CSV file dataset using th subflows
-		createDataset(subflows);
+		createDataset(flows);
 	}
 
 	// Method to get flow information from the logs
@@ -93,6 +97,7 @@ public class Training
 		  		{
 		    		for (File child : directoryListing) 
 		    		{
+		    			
 		    			// Get the source and dest IP, source and dest port of pcap file
 		    			int x = child.getName().indexOf("TCP_");
 		    			int y = child.getName().indexOf(".pcap.txt");
@@ -114,7 +119,8 @@ public class Training
 							++w; // increment the number of matches of log file and 
 							System.out.print(w+" ");
 							// System.out.println("x-x-x-x-x-x-x-x-x\n"+sourceIP+" : "+sourcePort+" , "+destIP+" : "+destPort);
-							
+							// System.out.println(child.getName());
+
 							// Store all the log file lines of the flow
 							ArrayList<String> loglines = new ArrayList<String>();
 							loglines.add(line); // add the current line
@@ -145,7 +151,7 @@ public class Training
 							Scanner scan = new Scanner(child);
 							ArrayList<Packet> data  = new ArrayList<Packet>();
 
-							int id=0; // Packet ID 
+							// int id=0; // Packet ID 
 							
 							/* Converting each pcap file line into a transaction */
 							while(scan.hasNextLine())
@@ -153,7 +159,7 @@ public class Training
 								String mline = scan.nextLine();
 								String[] W = mline.split(",");
 
-								++id;
+								// ++id;
 								int frame = Integer.parseInt(W[0]);
 								int incoming;
 								if(W[1].equals("True"))
@@ -170,7 +176,7 @@ public class Training
 								int trans_point = Integer.parseInt(W[8]);
 								int login = Integer.parseInt(W[9]);
 
-								Packet temp = new Packet(id, frame, incoming, sourceIP2,destIP2,sourcePort2,destPort2,timestamp,size,trans_point, login);
+								Packet temp = new Packet(frame, incoming, sourceIP2,destIP2,sourcePort2,destPort2,timestamp,size,trans_point, login);
 
 								data.add(temp);
 							}
@@ -179,36 +185,36 @@ public class Training
 
 						}
 		    		}
+		    		
 		    	}
 	
 			}
 			
 		}
 
-		System.out.println("\nNo. of flows in log files: "+w);
+		System.out.println("\n\nNo. of flows in log files: "+w);
 		return flows;
 			
 	}
 
 	// Method to create subflows from the flows
-	static ArrayList<SubFlow> createSubflows(ArrayList<Flow> flows, int u, int v)
+	static void createSubflows(ArrayList<Flow> flows, int u, int v)
 	{
 		// create subflows for packet pairs in each flow and create their flow features
-		ArrayList<SubFlow> subflows = new ArrayList<SubFlow>();
+		// ArrayList<SubFlow> subflows = new ArrayList<SubFlow>();
 		for(Flow f : flows)
 		{
+			System.out.println(f.id);
 			// for each packet pair belonging to the flow f 
 			for(PacketPair p : f.packetPairs)
 			{
-				// each subflow associated with a flow - use the flow id
-				SubFlow sf = new SubFlow(f.id);
-
-				// this subflow is associated with a particular packet pair
-				sf.ppid = p.pid;
-
+				
 				// make a valid subflow range using values u and v 
-				int i = p.pair1.id - u;
-				int j = p.pair2.id + v;
+
+				int i = f.features.indexOf(p.pair1) - u;
+				int j = f.features.indexOf(p.pair2) + v;
+
+				System.out.println(p.pid+": "+i+" "+j);
 				
 				if(i<=0 || j>f.features.size()) continue;
 
@@ -218,14 +224,12 @@ public class Training
 					int n = f.features.get(k-1).size;
 					if(f.features.get(k-1).incoming == 0)
 						n = 0-n;
-					sf.subflow.add(n);
+					p.sf.subflow.add(n);
 				}
 				
-				subflows.add(sf);
 			}
 		}
 
-		return subflows;
 	}
 
 	static void printSubFlows(ArrayList<SubFlow> subflows)
@@ -248,7 +252,7 @@ public class Training
 	}
 
 	// Find out the labels of the subprotocols for the subflows
-	static void labelSubprotocols(ArrayList<Flow> flows, ArrayList<SubFlow> subflows)
+	static void labelSubprotocols(ArrayList<Flow> flows)
 	{
 		// List of subflows for X alpha and X beta
 		ArrayList<SubFlow> x_alpha = new ArrayList<SubFlow>();
@@ -261,7 +265,10 @@ public class Training
 		// Iterate through the flows
 		for(Flow f : flows)
 		{
+			System.out.println("\n** Flow id: "+f.id);
 			int l=0;// count the number of login attempts
+
+			int check_tp2 = 0; // flag for checking presence of transition point 2
 
 			// Go through each line in the logs of the flow
 			for(String line : f.logs)
@@ -271,11 +278,20 @@ public class Training
 				{
 					if(l==0)
 					{
-						for(int i=0; i<f.packetPairs.size(); ++i)
+						for(int i=0; i<f.features.size(); ++i)
 						{
-							if(f.packetPairs.get(i).pair1.trans_point == 1)
+							if(f.features.get(i).trans_point == 1)
 							{
-								trans_point1 = f.packetPairs.get(i+1);
+								for(int j=0; j<f.packetPairs.size(); ++j)
+								{
+									if(f.packetPairs.get(j).pair1.id > f.features.get(i).id)
+									{
+										System.out.println("ID of transition point 1: "+f.packetPairs.get(j).pair1.id);
+										trans_point1 = f.packetPairs.get(j);
+										break;
+									}
+								}
+
 								break;
 							}
 						}
@@ -283,71 +299,89 @@ public class Training
 					
 					++l;
 				}
+				if(line.contains("root authenticated with password"))
+					check_tp2=1;
 			}
 
 			// Find transition point 2 
 			// the encrypted packet right after the last login attempt
 			int logins = l;
 			int j = 0;
-			for(Packet p : f.features)
+			System.out.println("Number of login attempts total: "+logins);
+
+			if(check_tp2==1)
 			{
-				if(p.login == 1)
-					logins--;
-
-				if(logins == 0)
+				for(Packet p : f.features)
 				{
-					j = 1;
-				}
+					if(p.login == 1)
+						logins--;
 
-				if(j == 1 && p.incoming == 1)
-				{
-					p.trans_point = 2;
-					break;
+					if(logins == 0)
+					{
+						j = 1;
+						continue;
+					}
+
+					if(j == 1 && p.login == 1)
+					{
+						p.trans_point = 2;
+						// break;
+						for(PacketPair pp : f.packetPairs)
+						{
+							// System.out.println(pp.pair1.id+" > ");
+							if(pp.pair1.id >= p.id)
+							{
+								System.out.println("ID of transition point 2: "+pp.pair1.id);
+								trans_point2 = pp;
+								break;
+							}
+						}
+
+						break;
+
+					}
 				}
+				
 			}
+			System.out.println("No. of packet pairs: "+f.packetPairs.size());
+			
+			// Label the subflow of that packet pair as transition point 1
 			for(PacketPair pp : f.packetPairs)
 			{
-				if(pp.pair1.trans_point == 2 || pp.pair2.trans_point == 2)
+				if(trans_point1.pid == pp.pid && pp.sf.subprotocol == "")
 				{
-					trans_point2 = pp;
-					break;
-				}
-			}
-
-			// Label the subflow of that packet pair as transition point 1
-			for(SubFlow sf : subflows)
-			{
-				if(f.id == sf.flowid && trans_point1.pid == sf.ppid && sf.subprotocol == "none")
-				{
-					sf.subprotocol = "transition point 1";
-					x_alpha.add(sf);
-					// System.out.println("flow: "+sf.flowid+" packet pair: "+sf.ppid);
-				}
-				if(f.id == sf.flowid && sf.ppid < trans_point1.pid)
-				{
-					sf.subprotocol = "transport";
-					x_alpha.add(sf);
+					pp.sf.subprotocol = "transition point 1";
+					x_alpha.add(pp.sf);
+					// System.out.println("packet pair: "+pp.pid+" "+pp.sf.subprotocol);
 				}
 
-				if(f.id == sf.flowid && trans_point2.pid == sf.ppid && sf.subprotocol == "none")
+				if(pp.pid < trans_point1.pid && pp.sf.subprotocol == "")
 				{
-					// System.out.println("sp: "+sf.subprotocol);
-					// System.out.println("beta");
-					sf.subprotocol = "transition point 2";
-					x_beta.add(sf);
-					// break;
-					// System.out.println("flow: "+sf.flowid+" packet pair: "+sf.ppid);
+					pp.sf.subprotocol = "transport";
+					x_alpha.add(pp.sf);
+					// System.out.println("packet pair: "+pp.pid+" "+pp.sf.subprotocol);
 				}
 
-				if(f.id == sf.flowid && sf.ppid > trans_point1.pid && sf.subprotocol != "transition point 2")
+				if(pp.pid > trans_point1.pid && pp.sf.subprotocol.equals(""))
 				{
-					// System.out.println("sp: "+sf.subprotocol);
-					// System.out.println("betaaaa");
-					sf.subprotocol = "user auth";
-					x_beta.add(sf);
+					if(check_tp2 == 1 && trans_point2.pid == pp.pid)
+					{
+						pp.sf.subprotocol = "transition point 2";
+						x_beta.add(pp.sf);
+						// System.out.println("packet pair: "+pp.pid+" "+pp.sf.subprotocol);
+					}
+					else
+					{
+						pp.sf.subprotocol = "user auth";
+						x_beta.add(pp.sf);
+						// System.out.println("packet pair: "+pp.pid+" "+pp.sf.subprotocol);
+					}
 				}
+
+				// System.out.println(sf.ppid+" "+sf.subprotocol);
 
 			} 
+
 		}
 
 		System.out.println("Alpha: "+x_alpha.size()+" Beta: "+x_beta.size());
@@ -355,7 +389,7 @@ public class Training
 	}
 
 	// Create a CSV file having the subflow information
-	static void createDataset(ArrayList<SubFlow> subflows)
+	static void createDataset(ArrayList<Flow> flows)
 	{
 		// name of the dataset file
 		String filePath = "../subflow_dataset.csv";
@@ -366,16 +400,22 @@ public class Training
 			Writer fileWriter = new FileWriter(filePath);
 			bufferedWriter = new BufferedWriter(fileWriter);
 
-			for(SubFlow sf : subflows)
+			for(Flow f: flows)
 			{
-				bufferedWriter.write(sf.flowid+","+sf.ppid+",");
-				for(int i : sf.subflow)
+				for(PacketPair p: f.packetPairs)
 				{
-					bufferedWriter.write(i+",");
+					if(p.sf.subflow.size() == 0)
+						continue;
+					bufferedWriter.write(f.id+","+p.pid+",");
+					for(int i : p.sf.subflow)
+					{
+						bufferedWriter.write(i+",");
+					}
+					bufferedWriter.write(p.sf.subprotocol);
+					bufferedWriter.write(System.getProperty("line.separator"));
 				}
-				bufferedWriter.write(sf.subprotocol);
-				bufferedWriter.write(System.getProperty("line.separator"));
 			}
+			
 		} catch (IOException e) {
 			System.out.println("Problem occurs when creating file " + filePath);
 			e.printStackTrace();

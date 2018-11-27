@@ -69,37 +69,28 @@ def get_centroids(X, c):
 
 	return centroids 
 
+def each_type_cluster(X):
+	Y = linkage(X, method='ward', metric='euclidean')
+	print(len(Y))
+	centroids = get_centroids(X,Y)
+	return centroids
+
 def main():
 
 	# Get the two sets to cluster
 	X_alpha, X_beta = read_file(filename)
 	print(len(X_alpha), len(X_beta))
 
-	# Perform hierarchical Ward clustering using Euclidean distance 
-	c_1 = linkage(X_alpha, method='ward', metric='euclidean')
-	c_2 = linkage(X_beta, method='ward', metric='euclidean')
-	Y_alpha = fcluster(c_1, th_alpha)
-	Y_beta = fcluster(c_2, th_beta)
-	print(type(c_1))
-	centroids_alpha = get_centroids(X_alpha, c_1)
-	centroids_beta = get_centroids(X_beta, c_2)
-	print(len(c_1), len(centroids_alpha))
-	print(len(c_2), len(centroids_beta))
-	# print(centroids_alpha)
-	# print(centroids_beta)
-
 	model_file = "../model.txt"
 	with open(model_file, 'w') as f:
 		writer = csv.writer(f)
-
+		centroids_alpha = each_type_cluster(X_alpha)
 		for c in centroids_alpha.keys():
 			writer.writerow(centroids_alpha[c])
 		f.write("---\n")
+		centroids_beta = each_type_cluster(X_beta)
 		for c in centroids_beta.keys():
 			writer.writerow(centroids_beta[c])
-
-	
-	# Final step: how to make Z_alpha and Z_beta?
 
 	# code to store the cluster models in a file 
 

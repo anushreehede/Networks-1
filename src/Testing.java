@@ -5,13 +5,6 @@ import java.io.File;
 
 class Testing 
 {
-	// 1. Get the value of the centroid for each cluster, store in a list
-	// 2. Take new set of pcap files, convert them to text and flow objects
-	// 3. Using the corresponding log files, label the flows
-	// 4. For each flow, create its subflows
-	// 5. Find the subflow/packet pair corresponding to each transition point
-	// 6. Predict labels for each flow based on criteria
-	// 7. Using the actual labelling and precitions, find accuracy of the model 
 	
 	// threshold values used by clustering model
 	static int th_alpha = 100;
@@ -19,6 +12,8 @@ class Testing
 
 	public static void main(String args[]) throws Exception
 	{
+		long sTime = System.currentTimeMillis();
+
 		// creates flow objects from the files of directory present in args[0]
 		ArrayList<Flow> test_flows = createFlows(args[0]);
 
@@ -26,14 +21,19 @@ class Testing
 		int u=1, v=1;
 
 		// make subflows using flows and packet pair info
-		ArrayList<SubFlow> test_subflows = createSubflows(test_flows, u, v);
-		System.out.println("Num of test subflows: "+test_subflows.size());
+		createSubflows(test_flows, u, v);
 		
 		// file containing the results of the clustering
 		String model_file = "../model.txt";
 
 		// identify the transition points for the test flows
-		identifySubprotocols(model_file, test_flows, test_subflows);
+		identifySubprotocols(model_file, test_flows);
+
+		// true labels for transition points
+		labelSubprotocols(test_flows);
+
+		// evaluate the accuracy of the transition point indentification
+		// evaluateSubprotocolAccuracy(test_flows);
 
 		// label the test flows with the actual ground truth
 		labelFlows(test_flows);
@@ -41,25 +41,11 @@ class Testing
 		float th_time = 1.5f; // threshold time for typing password
 		
 		// prediction of the label for the flow using criteria
-		detectionFunction(test_flows, test_subflows, th_time);
+		detectionFunction(test_flows, th_time);
 
-		// Printing actuals and labels
-		// int suc = 0, unsuc = 0;
-		for(Flow p : test_flows)
-		{
-			System.out.println("Actual: "+p.actual+" Label: "+p.label);
-			// if(p.label == "Successful SSH Attack")
-			// 	++suc;
-			// else if(p.label == "Unsuccessful SSH Attack")
-			// 	++unsuc;
-			// else
-			// 	continue;
-		}
-
-		// System.out.println("Successful: "+suc+" Unsuccessful: "+unsuc);
-
-		// evaluate the accuracy of the transition point indentification
-		// evaluateSubprotocolAccuracy(test_flows, test_subflows);
+		long eTime = System.currentTimeMillis();
+		long timeTaken = eTime-sTime;
+		System.out.println("\nTime taken for testing: "+timeTaken+" seconds");
 
 		// evaluate accuracy of the labelling of flows
 		evaluateDetectionAccuracy(test_flows);
@@ -87,7 +73,7 @@ class Testing
 			log_file.add(sc.nextLine());
 		}
 
-		System.out.println(log_file.size());
+		// System.out.println(log_file.size());
 		
 		// iterate over each line of the log file 
 		for(int k=0; k< log_file.size(); ++k)
@@ -131,6 +117,7 @@ class Testing
 		  		{
 		    		for (File child : directoryListing) 
 		    		{
+		    			
 		    			// Get the source and dest IP, source and dest port of pcap file
 		    			int x = child.getName().indexOf("TCP_");
 		    			int y = child.getName().indexOf(".pcap.txt");
@@ -152,7 +139,8 @@ class Testing
 							++w; // increment the number of matches of log file and 
 							System.out.print(w+" ");
 							// System.out.println("x-x-x-x-x-x-x-x-x\n"+sourceIP+" : "+sourcePort+" , "+destIP+" : "+destPort);
-							
+							// System.out.println(child.getName());
+
 							// Store all the log file lines of the flow
 							ArrayList<String> loglines = new ArrayList<String>();
 							loglines.add(line); // add the current line
@@ -183,15 +171,12 @@ class Testing
 							Scanner scan = new Scanner(child);
 							ArrayList<Packet> data  = new ArrayList<Packet>();
 
-							int id=0; // Packet ID 
-							
 							/* Converting each pcap file line into a transaction */
 							while(scan.hasNextLine())
 							{
 								String mline = scan.nextLine();
 								String[] W = mline.split(",");
 
-								++id;
 								int frame = Integer.parseInt(W[0]);
 								int incoming;
 								if(W[1].equals("True"))
@@ -208,7 +193,7 @@ class Testing
 								int trans_point = Integer.parseInt(W[8]);
 								int login = Integer.parseInt(W[9]);
 
-								Packet temp = new Packet(id, frame, incoming, sourceIP2,destIP2,sourcePort2,destPort2,timestamp,size,trans_point, login);
+								Packet temp = new Packet(frame, incoming, sourceIP2,destIP2,sourcePort2,destPort2,timestamp,size,trans_point, login);
 
 								data.add(temp);
 							}
@@ -217,36 +202,33 @@ class Testing
 
 						}
 		    		}
+
 		    	}
 	
 			}
 			
 		}
 
-		System.out.println("\nNo. of flows in log files: "+w);
+		System.out.println("\n\nNo. of flows in log files: "+w);
 		return flows;
 			
 	}
 
 	// Method to create subflows from the flows
-	static ArrayList<SubFlow> createSubflows(ArrayList<Flow> flows, int u, int v)
+	static void createSubflows(ArrayList<Flow> flows, int u, int v)
 	{
 		// create subflows for packet pairs in each flow and create their flow features
-		ArrayList<SubFlow> subflows = new ArrayList<SubFlow>();
 		for(Flow f : flows)
 		{
 			// for each packet pair belonging to the flow f 
 			for(PacketPair p : f.packetPairs)
 			{
-				// each subflow associated with a flow - use the flow id
-				SubFlow sf = new SubFlow(f.id);
-
-				// this subflow is associated with a particular packet pair
-				sf.ppid = p.pid;
-
 				// make a valid subflow range using values u and v 
-				int i = p.pair1.id - u;
-				int j = p.pair2.id + v;
+
+				int i = f.features.indexOf(p.pair1) - u;
+				int j = f.features.indexOf(p.pair2) + v;
+
+				// System.out.println(p.pid+": "+i+" "+j);
 				
 				if(i<=0 || j>f.features.size()) continue;
 
@@ -256,14 +238,11 @@ class Testing
 					int n = f.features.get(k-1).size;
 					if(f.features.get(k-1).incoming == 0)
 						n = 0-n;
-					sf.subflow.add(n);
+					p.sf.subflow.add(n);
 				}
-				
-				subflows.add(sf);
+
 			}
 		}
-
-		return subflows;
 	}
 
 	// Method to calculate Euclidean distance between two subflows
@@ -279,7 +258,7 @@ class Testing
 	}
 	
 	// Use the clustering results model to identify the test flow subprotocols
-	static void identifySubprotocols(String model_file, ArrayList<Flow> test_flows, ArrayList<SubFlow> test_subflows) throws Exception
+	static void identifySubprotocols(String model_file, ArrayList<Flow> test_flows) throws Exception
 	{
 		// lists to store alpha and beta subflows from the model
 		ArrayList<ArrayList<Float>> alpha_centroids = new ArrayList<ArrayList<Float>>();
@@ -316,14 +295,14 @@ class Testing
 		for(Flow f : test_flows)
 		{
 			// sf1 for transition point 1
-			SubFlow sf1 = new SubFlow();
+			PacketPair pp1 = new PacketPair();
 			// sf2 for transition point 2
-			SubFlow sf2 = new SubFlow(); 
+			PacketPair pp2 = new PacketPair(); 
 
 			// identify transition point 1
-			for(SubFlow sf : test_subflows)
+			for(PacketPair pp : f.packetPairs)
 			{
-				if(f.id == sf.flowid)
+				if(pp.sf.subflow.size() != 0)
 				{
 					float min_distance = 9999;
 
@@ -331,29 +310,29 @@ class Testing
 					for(ArrayList<Float> cluster : alpha_centroids)
 					{
 						// find the distance between the current cluster centroid and current test subflow
-						float d = distance(cluster, sf.subflow);
+						float d = distance(cluster, pp.sf.subflow);
 
 						// if the distance is minimum, store that subflow
 						if(d < min_distance)
 						{
 							min_distance = d;
-							sf1 = sf;
+							pp1 = pp;
 						}
 					}
 
 					// if the minimum distance is lesser than the alpha threshold, subflow contains transition point 1
 					if(min_distance < th_alpha)
 					{
-						sf1.subprotocol = "trans point 1";
+						pp1.sf.label = "transition point 1";
 						break;
 					}
 				}
 			}
 
 			// identify transition point 2
-			for(SubFlow sf : test_subflows)
+			for(PacketPair pp : f.packetPairs)
 			{
-				if(f.id == sf.flowid)
+				if(pp.sf.subflow.size() != 0)
 				{
 					float min_distance = 9999;
 
@@ -361,28 +340,157 @@ class Testing
 					for(ArrayList<Float> cluster : beta_centroids)
 					{
 						// find the distance between the current cluster centroid and current test subflow
-						float d = distance(cluster, sf.subflow);
+						float d = distance(cluster, pp.sf.subflow);
 						
 						// if the distance is minimum, store that subflow
 						if(d < min_distance)
 						{
 							min_distance = d;
-							sf2 = sf;
+							pp2 = pp;
 						}
 					}
 
 					// if the minimum distance is lesser than the beta threshold, subflow contains transition point 2
 					if(min_distance < th_beta)
 					{
-						sf2.subprotocol = "trans point 2";
+						pp2.sf.label = "transition point 2";
 						// System.out.println("found t p 2 :)))))");
 						break;
 					}
 				}
 			}
-			// System.out.print("For subflow "+f.id+": trans pt 1 is "+sf1.ppid+" and trans pt 2 is "+sf2.ppid);
+			// System.out.println("For flow "+f.id+" of size "+f.features.size()+": trans pt 1 is "+pp1.pid+" and trans pt 2 is "+pp2.pid);
 		}
 
+	}
+
+	// Find out the labels of the subprotocols for the subflows
+	static void labelSubprotocols(ArrayList<Flow> flows)
+	{
+		// Packet pairs denoting transition point 1 and 2
+		PacketPair trans_point1 = new PacketPair();
+		PacketPair trans_point2 = new PacketPair();
+
+		// Iterate through the flows
+		for(Flow f : flows)
+		{
+			// System.out.println("\n** Flow id: "+f.id);
+			int l=0;// count the number of login attempts
+			
+			int check_tp2 = 0;
+			// Go through each line in the logs of the flow
+			for(String line : f.logs)
+			{
+				// if there is a login attempt, only then check for trans point 1
+				if(line.contains("login attempt"))
+				{
+					if(l==0)
+					{
+						for(int i=0; i<f.features.size(); ++i)
+						{
+							if(f.features.get(i).trans_point == 1)
+							{
+								for(int j=0; j<f.packetPairs.size(); ++j)
+								{
+									if(f.packetPairs.get(j).pair1.id > f.features.get(i).id)
+									{
+										// System.out.println("ID of transition point 1: "+f.packetPairs.get(j).pair1.id);
+										trans_point1 = f.packetPairs.get(j);
+										break;
+									}
+								}
+
+								break;
+							}
+						}
+					}
+					
+					++l;
+				}
+				if(line.contains("root authenticated with password"))
+					check_tp2=1;
+			}
+
+			// Find transition point 2 
+			// the encrypted packet right after the last login attempt
+			int logins = l;
+			int j = 0;
+			// System.out.println("Number of login attempts total: "+logins);
+
+			if(check_tp2==1)
+			{
+				for(Packet p : f.features)
+				{
+					if(p.login == 1)
+						logins--;
+
+					if(logins == 0)
+					{
+						j = 1;
+						continue;
+					}
+
+					if(j == 1 && p.login == 1)
+					{
+						p.trans_point = 2;
+						for(PacketPair pp : f.packetPairs)
+						{
+							
+							if(pp.pair1.id >= p.id)
+							{
+								// System.out.println("ID of transition point 2: "+pp.pair1.id);
+								trans_point2 = pp;
+								break;
+							}
+						}
+
+						break;
+
+					}
+				}
+				
+			}
+			// System.out.println("No. of packet pairs: "+f.packetPairs.size());
+			
+			// Label the subflow of that packet pair as transition point 1
+			for(PacketPair pp : f.packetPairs)
+			{
+				
+				if(trans_point1.pid == pp.pid && pp.sf.subprotocol == "")
+				{
+					pp.sf.subprotocol = "transition point 1";
+					
+					// System.out.println("packet pair: "+pp.pid+" "+pp.sf.subprotocol);
+				}
+
+				if(pp.pid < trans_point1.pid && pp.sf.subprotocol == "")
+				{
+					pp.sf.subprotocol = "transport";
+					
+					// System.out.println("packet pair: "+pp.pid+" "+pp.sf.subprotocol);
+				}
+
+				if(pp.pid > trans_point1.pid && pp.sf.subprotocol.equals(""))
+				{
+					if(check_tp2 == 1 && trans_point2.pid == pp.pid)
+					{
+						pp.sf.subprotocol = "transition point 2";
+						
+						// System.out.println("packet pair: "+pp.pid+" "+pp.sf.subprotocol);
+					}
+					else
+					{
+						pp.sf.subprotocol = "user auth";
+						
+						// System.out.println("packet pair: "+pp.pid+" "+pp.sf.subprotocol);
+					}
+				}
+
+				// System.out.println(sf.ppid+" "+sf.subprotocol);
+
+			} 
+			
+		}
 	}
 
 	/* Omitting this function because it is out of scope of our dataset */
@@ -423,6 +531,7 @@ class Testing
 	// Label the flows with the actual ground truth
 	static void labelFlows(ArrayList<Flow> flows)
 	{
+		int s = 0, u = 0;
 		// iterate through the flows
 		for(Flow f : flows)
 		{
@@ -454,18 +563,21 @@ class Testing
 			// assign labels according to flag value
 			if(x == 0)
 			{
+				++u;
 				f.actual = "Unsuccessful SSH Attack";
 			}
 			else
 			{
+				++s;
 				f.actual = "Successful SSH Attack";
 			}
 
 		}
+		System.out.println("Success: "+s+" unsuccess: "+u);
 	}
 
 	// Use the crietria to do the detection 
-	static void detectionFunction(ArrayList<Flow> test_flows, ArrayList<SubFlow> test_subflows, float th_time)
+	static void detectionFunction(ArrayList<Flow> test_flows, float th_time)
 	{
 		for(Flow f : test_flows)
 		{
@@ -479,15 +591,15 @@ class Testing
 
 			// check for existence of transition point 2
 				int ppid = -1;
-				for(SubFlow sf : test_subflows)
+				for(PacketPair pp: f.packetPairs)
 				{
-					if(f.id == sf.flowid)
+
+					if(pp.sf.label.equals("transition point 2"))
 					{
-						if(sf.subprotocol.equals("trans point 2"))
-						{
-							ppid = sf.ppid;
-						}
+						ppid = pp.pid;
+						break;
 					}
+
 				}
 
 				if(ppid == -1)
@@ -496,17 +608,18 @@ class Testing
 					f.label = "Unsuccessful SSH Attack";
 				}
 
-				// if packets exist beyond transition point 2, successful else unsuccessful
+			
 				for(PacketPair pp : f.packetPairs)
 				{
 					if(ppid == pp.pid)
 					{
-						if(f.features.size() > pp.pair2.id)
+						if(f.features.size() > f.features.indexOf(pp.pair2))
 						{
 							f.label = "Successful SSH Attack";
 						}
 						else
 						{
+							// System.out.println("&&& anothe problem");
 							f.label = "Unsuccessful SSH Attack";
 						}
 					}
@@ -515,30 +628,54 @@ class Testing
 		}
 	}
 
-	// Evaluate the accuracy of the subprotocol identification function
-	static void evaluateSubprotocolAccuracy(ArrayList<Flow> flows, ArrayList<SubFlow> subflows)
-	{
-		int sum = 0;
-		for(Flow f : flows)
-		{
-			int a = 0;
-			int b = 0;
-
-			// if(f.)
-		}
-	}
+	// // Evaluate the accuracy of the subprotocol identification function
+	// static void evaluateSubprotocolAccuracy(ArrayList<Flow> flows)
+	// {
+	// 	int correct_1 = 0, correct_2=0;
+	// 	for(Flow f: flows)
+	// 	{
+	// 		for(PacketPair pp: f.packetPairs)
+	// 		{
+	// 			if(pp.sf.subprotocol.equals(pp.sf.label))
+	// 			{
+	// 				System.out.println("Flow: "+f.id+" id: "+pp.pid+" Actual: "+pp.sf.subprotocol+" Predicted: "+pp.sf.label);
+	// 				if(pp.sf.subprotocol.equals("transition point 1"))
+	// 					++correct_1;
+	// 				else
+	// 					++correct_2;
+	// 			}
+	// 		}
+	// 	}
+		
+	// 	System.out.println(correct_1+" "+correct_2);
+	// }
 
 	// Evaluate the accuracy of the flow labelling function
 	static void evaluateDetectionAccuracy(ArrayList<Flow> flows)
 	{
 		int correct = 0; // total number of correct labels
+		int tp = 0, tn = 0, fp = 0, fn = 0;
 		for(Flow f: flows)
 		{
+			// System.out.println("Flow: "+f.id+" Actual: "+f.actual+" Predicted: "+f.label);
 			if(f.label.equals(f.actual))
 				++correct;
+
+			if(f.actual.equals("Successful SSH Attack") && f.label.equals("Successful SSH Attack"))
+    			++tp;
+    		if(f.actual.equals("Unsuccessful SSH Attack") && f.label.equals("Unsuccessful SSH Attack"))
+    			++tn;
+    		if(f.actual.equals("Successful SSH Attack") && f.label.equals("Unsuccessful SSH Attack"))
+    			++fn;
+    		if(f.actual.equals("Unsuccessful SSH Attack") && f.label.equals("Successful SSH Attack"))
+    			++fp;
 		}
 
 		float accuracy = (float)correct/flows.size()*100;
-		System.out.println("Accuracy of attack detection: "+accuracy+"%");
+		System.out.println("\nAccuracy of attack detection: "+accuracy+"%");
+
+		// confusion matrix
+    	System.out.println("\nTrue Positive: "+tp+" , False Negative: "+fn);
+    	System.out.println("False Positive: "+fp+" , True Negative: "+tn);
 	}
 }

@@ -4,8 +4,7 @@
 
 class Packet
 {
-	int id; // Packet ID
-	int frame; // Frame number (pcap)
+	int id; // Packet ID (frame number)
 	int incoming; // Whether packet is incoming to server (1) or not (0)
 	String sourceIP; 
 	String destIP;
@@ -21,10 +20,9 @@ class Packet
 		
 	}
 
-	Packet(int id, int frame, int incoming, String sourceIP, String destIP, String sourcePort,String destPort,String timestamp,int size,int trans_point, int login)
+	Packet(int id, int incoming, String sourceIP, String destIP, String sourcePort,String destPort,String timestamp,int size,int trans_point, int login)
 	{
 		this.id = id;
-		this.frame = frame;
 		this.incoming=incoming;
 		this.sourceIP = sourceIP;
 		this.destIP = destIP;
@@ -39,6 +37,6 @@ class Packet
 
 	void printPacket()
 	{
-		System.out.println("Packet ID: "+id+ ", Frame: "+frame+", Incoming: "+incoming+"\nSource IP: "+sourceIP+", Destination IP: "+destIP+"\nSource port no: "+sourcePort+", Destination port: "+destPort+"\nTimestamp: "+timestamp+", Size: "+size+"\n");
+		System.out.println("Packet ID: "+id+", Incoming: "+incoming+"\nSource IP: "+sourceIP+", Destination IP: "+destIP+"\nSource port no: "+sourcePort+", Destination port: "+destPort+"\nTimestamp: "+timestamp+", Size: "+size+"\n");
 	}
 }

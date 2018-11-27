@@ -53,7 +53,8 @@ for filename in os.listdir(directory):
 	for packet in cap:
 		j+=1
 		if 'Client: Encrypted packet' in packet.info:
-			login_list.append(j)
+			print(packet.no+' ' + packet.info)
+			login_list.append(int(packet.no))
 
 
 
